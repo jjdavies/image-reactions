@@ -1,3 +1,3 @@
-export interface ImageFile{
-    data:Buffer
+export interface ImageFile {
+  data: Buffer;
 }

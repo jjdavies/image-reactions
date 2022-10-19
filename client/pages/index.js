@@ -5,51 +5,70 @@ import Upload from '../components/Upload';
 
 import Image from '../components/Image';
 
-function Homepage(){
+function Homepage() {
+  const [images, setImages] = useState([]);
+  const [selectedImage, setSelectedImage] = useState('');
 
-    const [images, setImages] = useState([])
-    const [selectedImage, setSelectedImage] = useState('')
+  useEffect(() => {
+    getImages();
+  }, []);
 
-    useEffect(()=>{
-        getImages();
-    }, [])
-    
-    const getImages = async() =>{
-        fetch('/image/0')
-        .then(res => {
-            res.json().then(data =>{
-                setImages(data.images)
-            })
-        })
+  const getImages = async () => {
+    const limit = 0;
+    fetch(`/image?limit=${limit}`).then((res) => {
+      res.json().then((data) => {
+        setImages(data.images);
+      });
+    });
+  };
 
+  const newSelection = (imageid) => {
+    console.log(imageid);
+    setSelectedImage(imageid);
+  };
+
+  const refreshImages = () => {
+    getImages();
+  };
+
+  const bgClick = (e) => {
+    if (e.target.id === 'bg-div') {
+      setSelectedImage('');
     }
+  };
 
-    const newSelection = (imageid) =>{
-        console.log(imageid)
-        setSelectedImage(imageid)
-    }
-
-    return (
-        <div>
-            <Tabs>
-                <TabList>
-                    <Tab>Browse</Tab>
-                    <Tab>Upload</Tab>
-                </TabList>
-                <TabPanel>
-                    <h1>Browse</h1>
-                    <div className="images-container">
-                            {images.map(img =>(
-                                <Image key={img.fileid} data={img} selected={selectedImage} newSelection={newSelection} />
-                            ))}
-                    </div>
-                </TabPanel>
-                <TabPanel>
-                    <Upload />
-                </TabPanel>
-            </Tabs>
+  return (
+    <>
+      {/* <head>
+                <title>Image Reactions | Don't Underreact!</title>
+            </head> */}
+      {/* <Script src='/spine-webgl.js' /> */}
+      <div id="bg-div" onClick={bgClick}>
+        {/* <Tabs>
+          <TabList>
+            <Tab>Browse</Tab>
+            <Tab>Upload</Tab>
+          </TabList>
+          <TabPanel> */}
+        <Upload refreshImages={refreshImages} />
+        <h1>Browse</h1>
+        <div className="images-container">
+          {images.map((img) => (
+            <Image
+              key={img.fileid}
+              data={img}
+              selected={selectedImage}
+              newSelection={newSelection}
+            />
+          ))}
         </div>
-    )
+        {/* </TabPanel>
+          <TabPanel>
+          </TabPanel>
+        </Tabs> */}
+      </div>
+    </>
+  );
 }
 
-export default Homepage
+export default Homepage;
